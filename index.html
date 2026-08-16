@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AIM Lead Flow Test</title>
+</head>
+
+<body>
+
+  <h1>Contact Our Business</h1>
+  <p>Fill in the form below and we will contact you.</p>
+
+  <form data-aim-lead-form>
+
+    <label>Name</label><br>
+    <input type="text" name="name" required>
+    <br><br>
+
+    <label>Email</label><br>
+    <input type="email" name="email">
+    <br><br>
+
+    <label>Phone</label><br>
+    <input type="tel" name="phone">
+    <br><br>
+
+    <label>Service</label><br>
+    <input type="text" name="service">
+    <br><br>
+
+    <label>Message</label><br>
+    <textarea name="message"></textarea>
+    <br><br>
+
+    <button type="submit">Submit</button>
+
+  </form>
+
+
+  <<!-- AIM Lead Flow — Website Integration -->
+<script>
+(function () {
+  var AIM_ENDPOINT = "https://zeziulmtrfzrcblpijmt.supabase.co/functions/v1/capture-lead";
+  var AIM_API_KEY = "sb_publishable_BFgyXYFv0Imbqxlo4j_hzg_hmpM89OX";
+  var AIM_BUSINESS_ID = "4c28c8fb-3fc9-4420-8c76-32aa55583399";
+
+  function value(form, names) {
+    for (var i = 0; i < names.length; i++) {
+      var el = form.querySelector('[name="' + names[i] + '"]');
+      if (el && el.value) return el.value;
+    }
+    return "";
+  }
+
+  document.addEventListener("submit", function (event) {
+    var form = event.target;
+    if (!form || !form.matches("form[data-aim-lead-form]")) return;
+    event.preventDefault();
+
+    var payload = {
+      business_id: AIM_BUSINESS_ID,
+      source: "Website",
+      name: value(form, ["name", "full_name", "fullname"]),
+      email: value(form, ["email"]),
+      phone: value(form, ["phone", "tel", "telephone"]),
+      message: value(form, ["message", "comments", "details"]),
+      service: value(form, ["service", "service_type"])
+    };
+
+    fetch(AIM_ENDPOINT, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "apikey": AIM_API_KEY,
+        "Authorization": "Bearer " + AIM_API_KEY
+      },
+      body: JSON.stringify(payload)
+    })
+      .then(function () { form.reset(); })
+      .catch(function (err) { console.error("AIM Lead Flow:", err); });
+  });
+})();
+</script>
+
+
+</body>
+</html>
