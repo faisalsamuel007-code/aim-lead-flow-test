@@ -77,7 +77,11 @@
       },
       body: JSON.stringify(payload)
     })
-      .then(function () { form.reset(); })
+      .then(function (response) {
+  if (!response.ok) throw new Error("Submission failed");
+  form.reset();
+  alert("Thank you! Your inquiry has been submitted successfully.");
+})
       .catch(function (err) { console.error("AIM Lead Flow:", err); });
   });
 })();
